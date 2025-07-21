@@ -316,18 +316,6 @@ jobs:
         with:
           disable_annotations: true
 
-      - name: Build FoundationDB Edition
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          rustup target add ${{matrix.target}}
-          # Get latest FoundationDB installer
-          curl --retry 5 -Lso foundationdb.pkg "$(gh api -X GET /repos/apple/foundationdb/releases --jq '.[] | select(.prerelease == false) | .assets[] | select(.name | test("${{startsWith(matrix.target, 'x86') && 'x86_64' || 'arm64'}}" + ".pkg$")) | .browser_download_url' | head -n1)"
-          sudo installer -allowUntrusted -dumplog -pkg foundationdb.pkg -target /
-          cargo build --release --target ${{matrix.target}} -p stalwart --no-default-features --features "foundationdb elastic s3 redis nats enterprise"
-          mkdir -p artifacts
-          mv ./target/${{matrix.target}}/release/stalwart ./artifacts/stalwart-foundationdb
-
       - name: Build
         run: |
           rustup target add ${{matrix.target}}
