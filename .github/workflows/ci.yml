@@ -399,6 +399,7 @@ jobs:
                   if [ "$extension" = "exe" ]; then
                       7z a -tzip "${filename}-${archive_dir_name}.zip" "$file" > /dev/null
                   else
+                      chmod a+x "$file"
                       tar -czf "${filename}-${archive_dir_name}.tar.gz" "$file"
                   fi
               done
